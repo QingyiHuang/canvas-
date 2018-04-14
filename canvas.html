@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<!--书中具有黄金屋，黄金屋能买颜如玉-->
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>canvas</title>
+
+<style>
+*{
+	margin: 0;
+}
+
+	.canvas{
+		display: block;
+		background-color:#222;
+	}
+</style>
+
+</head>
+<body>
+	<canvas class="canvas"></canvas>
+	<script>
+
+	window.onload=function(){
+		var canvas =document.querySelector('.canvas');
+		var ctx = canvas.getContext('2d');//生成2d画布
+		var ww,hh;//存储window的inner宽高
+		var balllist = [];
+		function init(){//改变浏览器窗口的大小来触发resize事件.
+			canvas.width=ww=window.innerWidth;
+			canvas.height=hh=window.innerHeight;
+		};
+		
+		init();//do
+
+		
+
+
+		class Ball{//球的类
+			constructor(x,y){
+				this.x = x;//创建一个坐标为100，100的球
+				this.y = y;
+				this.r = 40;
+				this.vx = (Math.random()-0.5)*8;
+				this.vy = (Math.random()-0.5)*8;
+				this.color = '#'+Math.floor(Math.random()*1000000);
+			}
+			update(){
+				this.x+=this.vx;
+				this.y+=this.vy;
+				this.r--;
+				if(this.r<0){
+					this.r=0;
+				}
+			}
+			drawball(){
+				ctx.fillStyle=this.color;
+				ctx.beginPath();
+				ctx.arc(this.x,this.y,this.r,0,Math.PI*2,false);//画圆心坐标x,y,半径，起始点位置，顺时针？
+				//描述绘制路径
+				
+				ctx.fill();/*填充*/	
+				this.update();		
+			}
+		}
+		var ball = new Ball(100,300);
+
+		/*填充*/
+		function render(){
+			ctx.clearRect(0,0,ww,hh)
+			balllist.forEach(function(item,i){
+				item.drawball();
+				if (item.r==0) {
+					balllist.splice(i,1);
+					i--;
+				}
+			})
+			requestAnimationFrame(render);
+		};
+
+
+		render();
+		window.onresize = init;//函数名交给onresize事件
+		canvas.addEventListener('mousemove',function(e){//事件监听，与数据绑定不同，指当mousemove时候添加一个事件监听，可以监听很多东西。
+			balllist.push(new Ball(e.offsetX,e.offsetY));
+
+		})
+	}
+//为什么不建议setInterval  阻塞的时候导致计时不准
+//requestAnimationFrame 根据浏览器刷新频率进行回调 
+//
+// 
+//  代理，委托链 
+	</script>
+</body>
+</html>
